@@ -1,5 +1,5 @@
 parsestudio
-google-api-python-client
+googlesearch-python
 anthropic
 python-dotenv
 requests
