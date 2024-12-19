@@ -1,1 +1,39 @@
-aW1wb3J0IG9zCmltcG9ydCBzeXMKZnJvbSBkb3RlbnYgaW1wb3J0IGxvYWRfZG90ZW52CmZyb20gc3JjLmdvb2dsZV9zZWFyY2ggaW1wb3J0IHNlYXJjaF9zdXN0YWluYWJpbGl0eV9yZXBvcnRzCmZyb20gc3JjLnBkZl9wYXJzZXIgaW1wb3J0IHBhcnNlX3BkZgpmcm9tIHNyYy5lbWlzc2lvbnNfZXh0cmFjdG9yIGltcG9ydCBleHRyYWN0X2VtaXNzaW9uc19kYXRhCgpkZWYgbWFpbihjb21wYW55X25hbWUpOgogICAgIyBMb2FkIGVudmlyb25tZW50IHZhcmlhYmxlcwogICAgbG9hZF9kb3RlbnYoKQogICAgCiAgICAjIFNlYXJjaCBmb3Igc3VzdGFpbmFiaWxpdHkgcmVwb3J0cwogICAgcHJpbnQoZiJTZWFyY2hpbmcgZm9yIHN1c3RhaW5hYmlsaXR5IHJlcG9ydHMgZm9yIHtjb21wYW55X25hbWV9Li4uIikKICAgIHBkZl91cmxzID0gc2VhcmNoX3N1c3RhaW5hYmlsaXR5X3JlcG9ydHMoY29tcGFueV9uYW1lKQogICAgCiAgICAjIFBhcnNlIFBERnMgYW5kIGV4dHJhY3QgcmVsZXZhbnQgc2VjdGlvbnMKICAgIHByaW50KCJQYXJzaW5nIFBERnMuLi4iKQogICAgcGFyc2VkX2RhdGEgPSBbXQogICAgZm9yIHVybCBpbiBwZGZfdXJsczoKICAgICAgICBwYXJzZWRfY29udGVudCA9IHBhcnNlX3BkZih1cmwpCiAgICAgICAgaWYgcGFyc2VkX2NvbnRlbnQ6CiAgICAgICAgICAgIHBhcnNlZF9kYXRhLmFwcGVuZChwYXJzZWRfY29udGVudCkKICAgIAogICAgIyBFeHRyYWN0IGFuZCBzdGFuZGFyZGl6ZSBlbWlzc2lvbnMgZGF0YQogICAgaWYgcGFyc2VkX2RhdGE6CiAgICAgICAgcHJpbnQoIkV4dHJhY3RpbmcgZW1pc3Npb25zIGRhdGEuLi4iKQogICAgICAgIGVtaXNzaW9uc19kYXRhID0gZXh0cmFjdF9lbWlzc2lvbnNfZGF0YShwYXJzZWRfZGF0YSkKICAgICAgICBwcmludCgiXG5FeHRyYWN0ZWQgRW1pc3Npb25zIERhdGE6IikKICAgICAgICBwcmludChlbWlzc2lvbnNfZGF0YSkKICAgIGVsc2U6CiAgICAgICAgcHJpbnQoIk5vIHZhbGlkIGRhdGEgZm91bmQgaW4gdGhlIHN1c3RhaW5hYmlsaXR5IHJlcG9ydHMuIikKCmlmIF9fbmFtZV9fID09ICJfX21haW5fXyI6CiAgICBpZiBsZW4oc3lzLmFyZ3YpICE9IDI6CiAgICAgICAgcHJpbnQoJ1VzYWdlOiBweXRob24gbWFpbi5weSAiQ29tcGFueSBOYW1lIicpCiAgICAgICAgc3lzLmV4aXQoMSkKICAgIAogICAgY29tcGFueV9uYW1lID0gc3lzLmFyZ3ZbMV0KICAgIG1haW4oY29tcGFueV9uYW1lKQ==
+import os
+import sys
+from dotenv import load_dotenv
+from src.google_search import search_sustainability_reports
+from src.pdf_parser import parse_pdf
+from src.emissions_extractor import extract_emissions_data
+
+def main(company_name):
+    # Load environment variables
+    load_dotenv()
+    
+    # Search for sustainability reports
+    print(f"Searching for sustainability reports for {company_name}...")
+    pdf_urls = search_sustainability_reports(company_name)
+    
+    # Parse PDFs and extract relevant sections
+    print("Parsing PDFs...")
+    parsed_data = []
+    for url in pdf_urls:
+        parsed_content = parse_pdf(url)
+        if parsed_content:
+            parsed_data.append(parsed_content)
+    
+    # Extract and standardize emissions data
+    if parsed_data:
+        print("Extracting emissions data...")
+        emissions_data = extract_emissions_data(parsed_data)
+        print("\nExtracted Emissions Data:")
+        print(emissions_data)
+    else:
+        print("No valid data found in the sustainability reports.")
+
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print('Usage: python main.py "Company Name"')
+        sys.exit(1)
+    
+    company_name = sys.argv[1]
+    main(company_name)
