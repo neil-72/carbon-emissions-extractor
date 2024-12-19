@@ -1,0 +1,7 @@
+parsestudio
+google-api-python-client
+anthropic
+python-dotenv
+requests
+tqdm
+pandas
